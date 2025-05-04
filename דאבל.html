@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק דאבל</title>
+    <style>
+        body {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+        }
+
+
+        section {
+            height: 500px;
+            width: 500px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-content: space-evenly;
+            flex-wrap: wrap;
+            padding: 10px;
+            border: black solid 3px;
+        }
+
+        div {
+            height: 30%;
+            width: 30%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 70px;
+            cursor: pointer;
+        }
+
+        header {
+            width: 100%;
+            text-align: center;
+            font-size: xx-large;
+        }
+    </style>
+</head>
+
+<body onload="start()">
+    <header id="succ">0</header>
+    <section></section>
+    <section></section>
+
+    <script>
+        let arrPics = ['😀', '😁', '😂', '🤣', '😍', '🥰', '😎', '😋', '🤗', '🤩', '😣', '😴', '🤐',
+            '🥱', '🤑', '😭', '😨', '🤯', '😩', '🥳', '🤠', '🤡', '🤫', '🧐', '🤓']
+        let double
+        let timer
+        function start() {
+            //ריקון הכרטיסים
+            let sectoins = document.getElementsByTagName('section')
+            for (let i = 0; i < sectoins.length; i++) {
+                sectoins[i].innerHTML = ''
+
+            }
+            //ערבוב
+            for (let index = 0; index < 50; index++) {
+                let num1 = Math.floor(Math.random() * arrPics.length)
+                let num2 = Math.floor(Math.random() * arrPics.length)
+                let temp = arrPics[num1]
+                arrPics[num1] = arrPics[num2]
+                arrPics[num2] = temp
+            }
+            let card1 = arrPics.slice(0, 9)
+            let card2 = arrPics.slice(8, 17)
+            //התמונה הכפולה
+            double = card2[0]
+            //התמונה הזהה נמצאת בכרטיס הראשון במקום האחרון
+            //ובכרטיס השני בראשון - יש לשנות להם מקום
+            let num = Math.floor(Math.random() * card1.length)
+            card1[card1.length - 1] = card1[num]
+            card1[num] = double
+            num = Math.floor(Math.random() * card1.length)
+            card2[0] = card2[num]
+            card2[num] = double
+            create(card1, sectoins[0])
+            create(card2, sectoins[1])
+            timer = setTimeout(start, 10000)
+        }
+
+        function create(arr, sec) {
+            for (let index = 0; index < arr.length; index++) {
+                let d = document.createElement('div')
+                d.innerText = arr[index]
+                sec.appendChild(d)
+                d.addEventListener('click', clickMe)
+            }
+        }
+        function clickMe() {
+            if (event.currentTarget.innerText == double) {
+                let h = document.getElementById('succ')
+                h.innerText = +(h.innerText) + 1
+                clearTimeout(timer)
+                start()
+            }
+        }
+
+    </script>
+</body>
+
+</html>
