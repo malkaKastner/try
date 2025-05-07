@@ -4,15 +4,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>משחק דאבל</title>
+    <title> 🎯משחק דאבל 🎯</title>
     <style>
+        /* רקע מונפש */
         body {
-            margin-top: 50px;
+            margin: 0;
+            padding: 50px 0 0 0;
             display: flex;
             justify-content: space-evenly;
             flex-wrap: wrap;
+            background: linear-gradient(-45deg, #6f79ff, #ff6f6f, #e26fff, #6ff3ff);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            font-family: Arial, sans-serif;
         }
 
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
 
         section {
             height: 500px;
@@ -23,7 +42,8 @@
             align-content: space-evenly;
             flex-wrap: wrap;
             padding: 10px;
-            border: black solid 3px;
+            border: rgb(255, 255, 255) double 15px;
+            box-shadow: black 5px 10px 10px;
         }
 
         div {
@@ -49,57 +69,72 @@
     <section></section>
     <section></section>
 
+    <!-- אפקט קולי להתאמה -->
+    <audio id="match-sound" src="success.mp3" preload="auto"></audio>
+
     <script>
         let arrPics = ['😀', '😁', '😂', '🤣', '😍', '🥰', '😎', '😋', '🤗', '🤩', '😣', '😴', '🤐',
-            '🥱', '🤑', '😭', '😨', '🤯', '😩', '🥳', '🤠', '🤡', '🤫', '🧐', '🤓']
-        let double
-        let timer
-        function start() {
-            //ריקון הכרטיסים
-            let sectoins = document.getElementsByTagName('section')
-            for (let i = 0; i < sectoins.length; i++) {
-                sectoins[i].innerHTML = ''
+            '🥱', '🤑', '😭', '😨', '🤯', '😩', '🥳', '🤠', '🤡', '🤫', '🧐', '🤓'];
+        let double;
+        let timer;
 
+        function start() {
+            // ריקון הכרטיסים
+            let sections = document.getElementsByTagName('section');
+            for (let i = 0; i < sections.length; i++) {
+                sections[i].innerHTML = '';
             }
-            //ערבוב
+
+            // ערבוב
             for (let index = 0; index < 50; index++) {
-                let num1 = Math.floor(Math.random() * arrPics.length)
-                let num2 = Math.floor(Math.random() * arrPics.length)
-                let temp = arrPics[num1]
-                arrPics[num1] = arrPics[num2]
-                arrPics[num2] = temp
+                let num1 = Math.floor(Math.random() * arrPics.length);
+                let num2 = Math.floor(Math.random() * arrPics.length);
+                let temp = arrPics[num1];
+                arrPics[num1] = arrPics[num2];
+                arrPics[num2] = temp;
             }
-            let card1 = arrPics.slice(0, 9)
-            let card2 = arrPics.slice(8, 17)
-            //התמונה הכפולה
-            double = card2[0]
-            //התמונה הזהה נמצאת בכרטיס הראשון במקום האחרון
-            //ובכרטיס השני בראשון - יש לשנות להם מקום
-            let num = Math.floor(Math.random() * card1.length)
-            card1[card1.length - 1] = card1[num]
-            card1[num] = double
-            num = Math.floor(Math.random() * card1.length)
-            card2[0] = card2[num]
-            card2[num] = double
-            create(card1, sectoins[0])
-            create(card2, sectoins[1])
-            timer = setTimeout(start, 10000)
+
+            let card1 = arrPics.slice(0, 9);
+            let card2 = arrPics.slice(8, 17);
+
+            // התמונה הכפולה
+            double = card2[0];
+
+            // התמונה הזהה נמצאת בכרטיס הראשון במקום אקראי
+            let num = Math.floor(Math.random() * card1.length);
+            card1[card1.length - 1] = card1[num];
+            card1[num] = double;
+
+            num = Math.floor(Math.random() * card2.length);
+            card2[0] = card2[num];
+            card2[num] = double;
+
+            create(card1, sections[0]);
+            create(card2, sections[1]);
+
+            timer = setTimeout(start, 10000);
         }
 
         function create(arr, sec) {
             for (let index = 0; index < arr.length; index++) {
-                let d = document.createElement('div')
-                d.innerText = arr[index]
-                sec.appendChild(d)
-                d.addEventListener('click', clickMe)
+                let d = document.createElement('div');
+                d.innerText = arr[index];
+                sec.appendChild(d);
+                d.addEventListener('click', clickMe);
             }
         }
-        function clickMe() {
-            if (event.currentTarget.innerText == double) {
-                let h = document.getElementById('succ')
-                h.innerText = +(h.innerText) + 1
-                clearTimeout(timer)
-                start()
+
+        function clickMe(event) {
+            const card = event.currentTarget;
+            card.classList.add('clicked');
+            setTimeout(() => card.classList.remove('clicked'), 500);
+
+            if (card.innerText === double) {
+                document.getElementById('match-sound').play();
+                let h = document.getElementById('succ');
+                h.innerText = +(h.innerText) + 1;
+                clearTimeout(timer);
+                start();
             }
         }
 
@@ -107,4 +142,3 @@
 </body>
 
 </html>
-
